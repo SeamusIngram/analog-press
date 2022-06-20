@@ -193,9 +193,9 @@ def analog_press(state,buttons):
     if buttons.notch and current_region%2 == 0 and target_region%2 == 1:
       # targetting a vertical notch
       if ((current_region == 2 or current_region == 4) and target_region == 3) or ((current_region == 6 or current_region == 8) and target_region == 7):
-        notch_p = region_coords(current_region,Point(23,76))
+        notch_p = region_coords(current_region,Point(31,73))
       else:
-        notch_p = region_coords(current_region,Point(76,23))
+        notch_p = region_coords(current_region,Point(73,31))
       target_angle_change = angle_to_notch(state.p,notch_p)
       # either travel towards notch, or clamp to notch value if it would overshoot
       if angle_change >= abs(target_angle_change) or state.p.x == notch_p.x or state.p.y == notch_p.y:
