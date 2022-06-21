@@ -70,7 +70,7 @@ def main():
 
     for event in pygame.event.get():
       if event.type == pygame.QUIT:
-        #pygame.image.save( window, 'gridless.png' )
+        #pygame.image.save( window, 'window.png' )
         pygame.quit()
         running = False
       elif event.type == pygame.KEYDOWN:
