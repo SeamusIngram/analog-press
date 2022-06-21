@@ -10,8 +10,8 @@ Run *main.py* to start the program. A window will appear with a grid that visual
 
 ## Keybindings
 The default keybindings are as follows:
-
-The keybinds are contained in the *keymap.py* folder. Simply change the variable to the key you wish to use. The names of the pygame constants is available [here](https://www.pygame.org/docs/ref/key.html). 
+![default keybinds](/images/keyboard-layout.png)
+Note that only the buttons necessary to generate or modify coordinate values have been mapped. The keybinds are contained in the *keymap.py* folder. Simply change the variable to the key you wish to use. The names of the pygame constants is available [here](https://www.pygame.org/docs/ref/key.html). 
 
 For example, if I wished to change my notch key from left shift to space bar,
 ```python
