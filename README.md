@@ -7,6 +7,10 @@ You will also need to install [pygame](https://www.pygame.org/wiki/GettingStarte
 
 ## General Usage
 Run *main.py* to start the program. A window will appear with a grid that visualizes the melee stick coordinates. The squares in grey are values with a distance greater than 1 from the center, and the white squares compose the valid stick coordinates. The red square is the current stick position that is sent to the console. To stop the visualization from running, you can either hit your **ESC** key, or close the window.
+<p align="center">
+  <img src="images/window.png" width="600" height="600">
+  <br />Default window appearance
+</p>  
 
 ## Keybindings
 The default keybindings are as follows:
@@ -54,9 +58,10 @@ By default, the notches are set to the maximum allowable angles under the Smash 
 
 This is a modifier that I am concerned of balance-wise. Being able to pinpoint values is one of the current ways digital controllers have an advantage over analog. This absolute precision removes the risk when trying to target specific coordinates. While modder notches do exist, They are not as consistent as having a perfect digital value. There are already limitations on notch values, but perhaps this can be explored to ensure balance. Additionally, 3 modifier buttons might lead to challenges with regards to layout, as well as pressing all the required buttons to perform certain inputs.
 
-#### C Stick
-This input scheme is only designed with the Left Stick in mind. I don't think this would work as well on the C Stick, and would probably. I understand that there are some who think a digital C Stick also provides an advantage over one that is analog, but I don't know enough about the topic to comment on if, or how it should be balanced. As such, this DAC was never meant to apply to the C Stick, and perhaps there is a better way to handle that input(if it needs it at all).
-
+#### Other Digital to Analog buttons
+This input scheme is only designed with the Left Stick in mind. I don't think this would work as well on the C Stick, and there is probably a better solution. I understand that there are some who think a digital C Stick also provides an advantage over one that is analog, but I don't know enough about the topic to comment on if, or how it should be balanced. As such, this DAC was never meant to apply to the C Stick, and perhaps there is a better way to handle that input(if it needs it at all).
+<br />
+<br /> The same is true for analog shields. You would still need the current lightshield/mediumshield buttons to get analog values. I think that if you wished to include a notch modifier, it could replace the medium shield button, such that existing controllers do not need to add more buttons.
 #### Parity
 
 ## Contributing
