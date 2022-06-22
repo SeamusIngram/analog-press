@@ -71,7 +71,7 @@ Most boxes only have 2 dedicated modifier buttons, but I experimentally wanted t
   <img src="images/notch.gif" width="600" height="600">
   <br />Rolling the stick into a notch
 </p> 
-By default, the notches are set to the maximum allowable angles under the Smash World Tour ruleset **(0.9125,0.3875).** Certain characters might want other values. You can adjust the notch coordinates to see this in the visualization by changing the coordinates here in these line of code in *dac.py*.
+By default, the notches are set to the maximum allowable angles under the Smash World Tour ruleset <b>(0.9125,0.3875).</b> Certain characters might want other values. You can adjust the notch coordinates to see this in the visualization by changing the coordinates here in these line of code in <i>dac.py</i>.  
 
 ```python
 if ((current_region == 2 or current_region == 4) and target_region == 3) or ((current_region == 6 or current_region == 8) and target_region == 7):
