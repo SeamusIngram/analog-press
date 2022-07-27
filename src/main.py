@@ -56,7 +56,7 @@ def main():
   x = CENTER
   y = CENTER
   window = pygame.display.set_mode((SCALING*NUM_ROWS,SCALING*NUM_COLS))
-  bg = pygame.image.load("images/gridless.png")
+  bg = pygame.image.load("img/gridless.png")
   s = dac.State(x,y)
   b = dac.Btn()
   running = True
@@ -71,7 +71,7 @@ def main():
 
     for event in pygame.event.get():
       if event.type == pygame.QUIT:
-        #pygame.image.save( window, 'window.png' )
+        #pygame.image.save( window, 'img/window.png' )
         pygame.quit()
         running = False
       elif event.type == pygame.KEYDOWN:

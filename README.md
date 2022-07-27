@@ -8,13 +8,13 @@ You will also need to install [pygame](https://www.pygame.org/wiki/GettingStarte
 ## General Usage
 Run *main.py* to start the program. A window will appear with a grid that visualizes the melee stick coordinates. The squares in grey are values with a distance greater than 1 from the center, and the white squares compose the valid stick coordinates. The red square is the current stick position that is sent to the console. To stop the visualization from running, you can either hit your **ESC** key, or close the window. Pressing keys will cause the cursor to move, in the way defined by the DAC in use.
 <p align="center">
-  <img src="images/window.png" width="600" height="600">
+  <img src="src/img/window.png" width="600" height="600">
   <br />Default window appearance
 </p>  
 
 ## Keybindings
 The default keybindings are as follows:
-![default keybinds](/images/keyboard-layout.png)
+![default keybinds](/src/img/keyboard-layout.png)
 Note that only the buttons necessary to generate or modify coordinate values have been mapped. The keybinds are contained in the *keymap.py* folder. Simply change the variable to the key you wish to use. The names of the pygame constants are available [here](https://www.pygame.org/docs/ref/key.html). 
 
 For example, if I wished to change my notch key from right shift to space bar,
@@ -43,7 +43,7 @@ When you press a button during analog press, instead of corresponding to a coord
 
 When you press in a new direction, the cursor will attempt to move in a straight line from your current coordinate towards the target gate. There are 8 targets, accounting for the 8 possible combinations of button inputs: 4 cardinals and 4 diagonal gates. On an analog stick, you would be able to push the stick straight into the rim at any angle. Unfortunately, since digital inputs can only have 4 directional buttons (much more than that would be impractical anyway), we are more limited to specifying 8 target points. Even with this limitation, by changing which direction the stick is moving, you will be able to move your cursor to any possible coordinate value.
 <p align="center">
-  <img src="images/span.gif" width="600" height="600">
+  <img src="src/img/span.gif" width="600" height="600">
   <br />You are able to smoothly move through all coordinates!
 </p>  
 There is one condition where the stick is not moving in a straight line, and that is when it is <b>rolling between gates</b>. If the stick is at the edge of the coordinate circle and you are moving to an adjacent gate, the control stick will move along the edge of the circle, instead of a straight line. This is important for characters whose recovery moves depend on the distance the stick is from the center. A straight path from gate to gate does not achieve the max distance coordinates. Also, this rolling motion is more akin to how players move an analog stick between gates, increasing the similarity of these input methods. It is also a slight travel time nerf, as rolling along the edge is a slightly longer distance to travel that a straight line (Though not by much). 
@@ -54,7 +54,7 @@ There is one condition where the stick is not moving in a straight line, and tha
 When you press a button the stick will move quickly towards its target at a constant velocity. It moves quickly because desirable actions like dash require a fast movement from one coordinate to the next. There are times when a slower input is needed, such as initiating a tilt input, or to precisely adjust an angle. To do this, you press the **Slow** modifier. The stick behaviour is the exact same for both the fast and slow movements, all that changes is how quickly they occur.
 <br />
 <p align="center">
-  <img src="images/slow.gif" width="600" height="600">
+  <img src="src/img/slow.gif" width="600" height="600">
   <br />Comparing slow and fast stick movement
 </p> 
 
@@ -62,7 +62,7 @@ When you press a button the stick will move quickly towards its target at a cons
 The way this system is designed, when pressing a button, the cursor is constantly in motion. If you let go of all the buttons, then the cursor returns to neutral (think of it as letting go of the stick). This presents a challenge. What if I want to hold my stick at a certain position? Say I want to hold a slight DI coordinate, or I think I have reached the angle I want, but need to wait slightly longer to become actionable and use the angle. To hold the stick at its current position, press the **hold** button, which will freeze the cursor at the current coordinate. It will be frozen for as long as *hold* is pressed, and **at least one direction button is pressed.** If you fully let go of all directions, the stick will return to neutral, and you will not be able to input any other directions until you release *hold*. If you release *hold* at any point, then the cursor will once again move in the direction of your current input.
 <br />
 <p align="center">
-  <img src="images/hold.gif" width="600" height="600">
+  <img src="src/img/hold.gif" width="600" height="600">
   <br />Holding in certain coordinates
 </p> 
 
@@ -70,7 +70,7 @@ The way this system is designed, when pressing a button, the cursor is constantl
 Most boxes only have 2 dedicated modifier buttons, but I experimentally wanted to add notch funtionality. If your cursor is currently against the rim, and rolling from a diagonal into an adjacent cardinal, and the **notch** button is pressed, the cursor will be stopped at the notch value. This allows for the targetting of desirable coordinates along the edge, much like a modified Gamecube Controller shell. 8 notch values are permitted, allowing Analog Press to target 16 coordinates (4 cardinals, 4 diagonals, 8 notches).
 
 <p align="center">
-  <img src="images/notch.gif" width="600" height="600">
+  <img src="src/img/notch.gif" width="600" height="600">
   <br />Rolling the stick into a notch
 </p> 
 By default, the notches are set to the maximum allowable angles under the Smash World Tour ruleset <b>(0.9125,0.3875)</b>, which is <b>23°.</b> Certain characters might want other values. You can adjust the notch coordinatesn by changing the values in these line of <i>dac.py</i>.  
