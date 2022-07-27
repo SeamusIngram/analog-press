@@ -37,10 +37,12 @@ def redraw(window, rows, cols, size,state):
 
 
 def update_pos(state,buttons):
-  use_boxx = False
+  dac_type = 0
   dac.socd(state,buttons)
-  if use_boxx:
+  if dac_type == 0:
     dac.box_dac(state,buttons)
+  elif dac_type == 1:
+    dac.box_travel()
   else:
     dac.analog_press(state,buttons)
   pass
@@ -60,9 +62,8 @@ def main():
   running = True
   while running:
     keys = pygame.key.get_pressed()
-    mods = pygame.key.get_pressed()
     b.read(keys[keymap.UP],keys[keymap.DOWN],keys[keymap.LEFT],keys[keymap.RIGHT],keys[keymap.SLOW],
-      keys[keymap.HOLD],mods[keymap.NOTCH],keys[keymap.C_UP],keys[keymap.C_DOWN],keys[keymap.C_LEFT],
+      keys[keymap.HOLD],keys[keymap.NOTCH],keys[keymap.C_UP],keys[keymap.C_DOWN],keys[keymap.C_LEFT],
       keys[keymap.C_RIGHT],keys[keymap.B],keys[keymap.L],keys[keymap.R])
     window.blit(bg, (0, 0))
     update_pos(s,b)
@@ -74,7 +75,7 @@ def main():
         pygame.quit()
         running = False
       elif event.type == pygame.KEYDOWN:
-        if event.key == pygame.K_ESCAPE:
+        if event.key == keymap.QUIT:
             pygame.quit()
             running = False
 

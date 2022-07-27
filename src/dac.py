@@ -360,7 +360,7 @@ def box_dac(state,buttons):
 
   if (vertical and horizontal):
     if (buttons.l or buttons.r):
-      if (buttons.slow == buttons.hold):
+      if (buttons.slow == buttons.notch):
           x = 0.7
           y = 0.7 if read_up else 0.6875
       elif buttons.slow:
@@ -369,7 +369,7 @@ def box_dac(state,buttons):
       else: 
         x = 0.475 if read_up else 0.5
         y = 0.875 if read_up else 0.85
-    elif (buttons.B and (buttons.slow != buttons.hold)):
+    elif (buttons.B and (buttons.slow != buttons.notch)):
       if (buttons.slow):
         if (buttons.c_down):
             x = 0.9125
@@ -403,7 +403,7 @@ def box_dac(state,buttons):
             x = 0.3875
             y = 0.9125
                   
-    elif (buttons.slow != buttons.hold):
+    elif (buttons.slow != buttons.notch):
       if (buttons.slow):
         if (buttons.c_down):
           x = 0.7
@@ -441,7 +441,7 @@ def box_dac(state,buttons):
       y = 0.7
 
   elif (horizontal):
-      if (buttons.slow == buttons.hold):
+      if (buttons.slow == buttons.notch):
          x = 1.0
          y = 0.0
       elif (buttons.slow): 
@@ -452,7 +452,7 @@ def box_dac(state,buttons):
         y = 0.0
 
   elif (vertical):
-      if (buttons.slow == buttons.hold): 
+      if (buttons.slow == buttons.notch): 
         x = 0.0
         y = 1.0
       elif (buttons.slow): 
