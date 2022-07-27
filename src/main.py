@@ -37,7 +37,7 @@ def redraw(window, rows, cols, size,state):
 
 
 def update_pos(state,buttons):
-  dac_type = 0
+  dac_type = 2
   dac.socd(state,buttons)
   if dac_type == 0:
     dac.box_dac(state,buttons)

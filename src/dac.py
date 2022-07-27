@@ -139,23 +139,27 @@ def analog_press(state,buttons):
   VEL_FAST = 5
   VEL_SLOW = .2
   VEL_RETURN = .5
-  no_pressed =  not buttons.up and  not buttons.down and not buttons.left and not buttons.right
-  if no_pressed:
-    v = VEL_RETURN
-  elif buttons.slow:
-    v = VEL_SLOW
-  else:
-    v = VEL_FAST
-  dt = t - state.t
-  d = v*dt
-  target_p = target(buttons)
+  VEL_ROLL = 1
 
   r = state.p.mag()
+  target_p = target(buttons)
   current_region = state.p.get_region()
   target_region = target_p.get_region()
   adjacent_region = True if abs(target_region-current_region) <= 1 or target_region + current_region == 9 else False
   # if on rim, and travelling to an adjacent region, roll the stick along gates instead of following a straight path
   roll_stick = True if r >= 75 and adjacent_region else False
+  no_pressed =  not buttons.up and  not buttons.down and not buttons.left and not buttons.right
+
+  if no_pressed:
+    v = VEL_RETURN
+  elif buttons.slow:
+    v = VEL_SLOW
+  elif roll_stick:
+    v =VEL_ROLL
+  else:
+    v = VEL_FAST
+  dt = t - state.t
+  d = v*dt
 
   # reset the hold duration, to know if the button was let go  
   if not buttons.hold:
