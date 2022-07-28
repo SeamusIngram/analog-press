@@ -37,12 +37,16 @@ def redraw(window, rows, cols, size,state):
 
 
 def update_pos(state,buttons):
+  socd_type = 0
   dac_type = 2
-  dac.socd(state,buttons)
+  if socd_type == 0:
+    dac.second_ip_no_reac(state,buttons)
+  else:
+    dac.neutral_reac(state,buttons)
   if dac_type == 0:
     dac.box_dac(state,buttons)
   elif dac_type == 1:
-    dac.box_travel()
+    dac.box_travel_time(state,buttons)
   else:
     dac.analog_press(state,buttons)
   pass

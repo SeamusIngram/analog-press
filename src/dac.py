@@ -99,7 +99,7 @@ class State():
     self.dx_accum = 0
     self.dy_accum = 0
 
-def socd(state,buttons):
+def second_ip_no_reac(state,buttons):
   if (state.left_pressed and buttons.left and buttons.right and not state.right_pressed):
      state.forbid_left = True
   if (state.right_pressed and buttons.left and buttons.right and  not state.left_pressed):
@@ -131,6 +131,15 @@ def socd(state,buttons):
      buttons.up = False
   if state.forbid_down:
      buttons.down = False
+
+def neutral_reac(state,buttons):
+  if buttons.left and buttons.right:
+    buttons.left = False
+    buttons.right = False
+  if buttons.up and buttons.down:
+    buttons.up = False
+    buttons.down = False
+
 
 def analog_press(state,buttons):
   t = pygame.time.get_ticks()
@@ -178,7 +187,7 @@ def analog_press(state,buttons):
       theta = math.atan2(target_p.y-state.p.y,target_p.x-state.p.x)
       dx = d*math.cos(theta) if int(state.p.x) != int(target_p.x) else 0
       dy = d*math.sin(theta)
-      xy, adjusted = quantize(dx,dy,state)
+      xy, adjusted = quantize(dx,dy,target_p.x,target_p.y,state)
       # Until you let go of hold, the stick will be stuck in neutral
       state.reset_hold = False
 
@@ -228,7 +237,7 @@ def analog_press(state,buttons):
     # cos(0) = 1, so if theta is 0 because you're already at the correct point we want dx to be 0, not d
     dx = d*math.cos(theta) if int(state.p.x) != int(target_p.x) else 0
     dy = d*math.sin(theta)
-    xy, adjusted = quantize(dx,dy,state)
+    xy, adjusted = quantize(dx,dy,target_p.x,target_p.y,state)
     # stay within bound of the stick circle. Don't forget offset
     if xy.mag()>80:
       xy.set(target_p.x, target_p.y)
@@ -320,27 +329,29 @@ def adjust_mag(p):
 
 # Take the distance travelled from the current point, and generate a new point that is an actual coordinate
 # If dx or dy are ever less than a full step, don't move the point, but accumulate values until finally a full step can be taken
-def quantize(dx,dy,state):
+def quantize(dx,dy,tx,ty,state):
   adjusted = False
   if abs(dx) > 0 and abs(dx) < 1:
     state.dx_accum += dx
-  if abs(dy) > 0 and (dy) < 1:
+  if abs(dy) > 0 and abs(dy) < 1:
     state.dy_accum += dy
   if abs(state.dx_accum) > 1:
     x=state.p.x+math.copysign(math.floor(abs(state.dx_accum)),state.dx_accum)
     state.dx_accum = 0
     adjusted = True
   else:
-    x= state.p.x+math.copysign(math.floor(abs(dx)),dx)
-    if math.copysign(math.floor(abs(dx)),dx) > 0:
+    adjust_x = tx-state.p.x if abs(dx) > abs(tx-state.p.x) else dx
+    x= state.p.x+math.copysign(math.floor(abs(adjust_x)),adjust_x)
+    if math.copysign(math.floor(abs(adjust_x)),adjust_x) > 0:
       adjusted = True
   if abs(state.dy_accum) > 1:
     y=state.p.y+math.copysign(math.floor(abs(state.dy_accum)),state.dy_accum)
     state.dy_accum = 0
     adjusted = True
   else:
-    y= math.copysign(math.floor(abs(dy)),dy)+state.p.y
-    if math.copysign(math.floor(abs(dy)),dy) > 0:
+    adjust_y = ty-state.p.y if abs(dy) > abs(ty-state.p.y) else dy 
+    y= math.copysign(math.floor(abs(adjust_y)),adjust_y)+state.p.y
+    if math.copysign(math.floor(abs(adjust_y)),adjust_y) > 0:
       adjusted = True
   p = Point(x,y)
   return p, adjusted
@@ -348,15 +359,53 @@ def quantize(dx,dy,state):
 # roll along the rim a specified angle to the next point
 def roll_to_new_point(state,new_angle,current_angle):
   adjusted = False
+  target_x = math.cos(new_angle) 
+  target_y = math.sin(new_angle)
   dx = 80*(math.cos(new_angle) - math.cos(current_angle))
   dy = 80*(math.sin(new_angle) - math.sin(current_angle))
-  p, adjusted = quantize(dx,dy,state)
+  p, adjusted = quantize(dx,dy,target_x,target_y,state)
   if adjusted:
     p = adjust_mag(p)
   return p
 
 # Arte's Melee_F1 DAC converted to python
 def box_dac(state,buttons):
+  p = box_coords(buttons)
+  x = p.x
+  y = p.y
+  theta = round(math.degrees(math.atan2(y,x)),1)
+  degree_sign = u'\N{DEGREE SIGN}'
+  print(f'{x},{y} {theta}{degree_sign}')
+  x = x*80 + 81
+  y = y*80 + 81
+  state.p.x = x
+  state.p.y = y
+
+def box_travel_time(state,buttons):
+  t = pygame.time.get_ticks()
+  target_p = box_coords(buttons)
+  target_p.x = target_p.x*80 + 81
+  target_p.y = target_p.y*80 + 81
+  VEL_TRAVEL = 3
+  v = VEL_TRAVEL
+  dt = t - state.t
+  d = v*dt
+  theta = math.atan2(target_p.y-state.p.y,target_p.x-state.p.x)
+  # cos(0) = 1, so if theta is 0 because you're already at the correct point we want dx to be 0, not d
+  dx = d*math.cos(theta) if int(state.p.x) != int(target_p.x) else 0
+  dy = d*math.sin(theta)
+
+  xy, adjusted = quantize(dx,dy,target_p.x,target_p.y,state)
+  # stay within bound of the stick circle. Don't forget offset
+  if xy.mag()>81:
+    xy.set(target_p.x, target_p.y)
+  state.p.set(xy.x,xy.y)
+  theta_output = round(math.degrees(xy.ang()),1)
+  degree_sign = u'\N{DEGREE SIGN}'
+  print(f'{round((xy.x-81)/80,4)},{round((xy.y-81)/80,4)} {theta_output}{degree_sign}')
+  state.t = pygame.time.get_ticks()
+
+def box_coords(buttons):
   vertical = buttons.up or buttons.down
   read_up = buttons.up
   horizontal = buttons.left or buttons.right
@@ -463,7 +512,7 @@ def box_dac(state,buttons):
         x = 0.0
         y= 0.5375
       else: 
-        x - 0.0
+        x = 0.0
         y = 0.7375
 
   else:
@@ -474,10 +523,5 @@ def box_dac(state,buttons):
     x =  -1.0*x
   if (vertical and read_up): 
     y = -1.0*y
-  theta = round(math.degrees(math.atan2(y,x)),1)
-  degree_sign = u'\N{DEGREE SIGN}'
-  print(f'{x},{y} {theta}{degree_sign}')
-  x = x*80 + 81
-  y = y*80 + 81
-  state.p.x = x
-  state.p.y = y
+  return Point(x,y)
+  
