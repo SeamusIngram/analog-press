@@ -37,6 +37,7 @@ def redraw(window, rows, cols, size,state):
 
 
 def update_pos(state,buttons):
+  #Select SOCD and DTA options!
   socd_type = 0
   dac_type = 2
   if socd_type == 0:
