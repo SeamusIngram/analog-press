@@ -187,9 +187,10 @@ def analog_press(state,buttons):
       theta = math.atan2(target_p.y-state.p.y,target_p.x-state.p.x)
       dx = d*math.cos(theta) if int(state.p.x) != int(target_p.x) else 0
       dy = d*math.sin(theta)
-      xy, adjusted = quantize(dx,dy,target_p.x,target_p.y,state)
+      xy = quantize(dx,dy,target_p.x,target_p.y,state)
       # Until you let go of hold, the stick will be stuck in neutral
       state.reset_hold = False
+
 
   elif roll_stick:
     # 2pi cancels: theta/(2pi radians) = d/(2piR)
@@ -237,7 +238,7 @@ def analog_press(state,buttons):
     # cos(0) = 1, so if theta is 0 because you're already at the correct point we want dx to be 0, not d
     dx = d*math.cos(theta) if int(state.p.x) != int(target_p.x) else 0
     dy = d*math.sin(theta)
-    xy, adjusted = quantize(dx,dy,target_p.x,target_p.y,state)
+    xy = quantize(dx,dy,target_p.x,target_p.y,state)
     # stay within bound of the stick circle. Don't forget offset
     if xy.mag()>80:
       xy.set(target_p.x, target_p.y)
@@ -317,16 +318,6 @@ def angle_to_notch(p,target):
     theta = 2*math.asin(math.sqrt((x-target_x)**2+(y-target_y)**2)/(2*80))
   return theta
 
-# If a point is outside the coordinate circle ,shift it inwards
-def adjust_mag(p):
-  if p.mag()>80:
-    result_angle = p.ang()
-    if abs(result_angle)>math.pi/4 and abs(result_angle) < 3*math.pi/4:
-      p.y = p.y - math.copysign(1,p.y-82)
-    else:
-      p.x = p.x - math.copysign(1,p.x-82) 
-  return p
-
 # Take the distance travelled from the current point, and generate a new point that is an actual coordinate
 # If dx or dy are ever less than a full step, don't move the point, but accumulate values until finally a full step can be taken
 def quantize(dx,dy,tx,ty,state):
@@ -354,18 +345,23 @@ def quantize(dx,dy,tx,ty,state):
     if math.copysign(math.floor(abs(adjust_y)),adjust_y) > 0:
       adjusted = True
   p = Point(x,y)
-  return p, adjusted
+  # Adjust inwards if overshoot occurs
+  if adjusted:
+    if p.mag()>80:
+      result_angle = p.ang()
+      if abs(result_angle)>math.pi/4 and abs(result_angle) < 3*math.pi/4:
+        p.y = p.y - math.copysign(1,p.y-82)
+      else:
+        p.x = p.x - math.copysign(1,p.x-82) 
+  return p
 
 # roll along the rim a specified angle to the next point
 def roll_to_new_point(state,new_angle,current_angle):
-  adjusted = False
   target_x = math.cos(new_angle) 
   target_y = math.sin(new_angle)
   dx = 80*(math.cos(new_angle) - math.cos(current_angle))
   dy = 80*(math.sin(new_angle) - math.sin(current_angle))
-  p, adjusted = quantize(dx,dy,target_x,target_y,state)
-  if adjusted:
-    p = adjust_mag(p)
+  p = quantize(dx,dy,target_x,target_y,state)
   return p
 
 # Arte's Melee_F1 DAC converted to python
@@ -395,7 +391,7 @@ def box_travel_time(state,buttons):
   dx = d*math.cos(theta) if int(state.p.x) != int(target_p.x) else 0
   dy = d*math.sin(theta)
 
-  xy, adjusted = quantize(dx,dy,target_p.x,target_p.y,state)
+  xy = quantize(dx,dy,target_p.x,target_p.y,state)
   # stay within bound of the stick circle. Don't forget offset
   if xy.mag()>81:
     xy.set(target_p.x, target_p.y)
