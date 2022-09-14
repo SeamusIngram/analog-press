@@ -7,25 +7,24 @@ You will also need to install [pygame](https://www.pygame.org/wiki/GettingStarte
 
 ## General Usage
 Run *main.py* to start the program. A window will appear with a grid that visualizes the melee stick coordinates. The squares in grey are values with a distance greater than 1 from the center, and the white squares compose the valid stick coordinates. The red square is the current stick position that is sent to the console. This will be referred to as the **cursor** throughout the readme. To stop the visualization from running, you can either hit your **ESC** key, or close the window. Pressing keys will cause the cursor to move, in the way defined by the selected DTA method.
-<p align="center">
-  <img src="src/img/window.png" width="600" height="600">
-  <br />Default window appearance
-</p>  
+
+![Default window appearance](src/img/window.png)
+Default Window Appearance
 
 ## Keybindings
 The default keybindings are as follows:
-![default keybinds](/src/img/keyboard-layout.png)
+![default keybinds](/src/img/default-layout.PNG)
 Note that only the buttons necessary to generate or modify coordinate values have been mapped. The keybinds are contained in the *keymap.py* folder. Simply change the variable to the key you wish to use. The names of the pygame constants are available [here](https://www.pygame.org/docs/ref/key.html). 
 
-For example, if I wished to change my notch key from right shift to space bar,
+For example, if I wished to change my B key from I to O,
 ```python
-NOTCH = pygame.K_RSHIFT
+NOTCH = pygame.K_i
 ```
 would become
 ```python
-NOTCH = pygame.K_SPACE
+NOTCH = pygame.K_o
 ```
-Note that the **SLOW**, and **NOTCH** buttons correspond to **Modifier X** and **Modifier Y** in the standard box input scheme, respectively. 
+Note that the **NOTCH**, and **SLOW** buttons correspond to **Modifier X** and **Modifier Y** in the standard box input scheme, respectively. 
 
 ## SOCD Method Selection
 In the **update_pos** function in *main.py*, the value **socd_type** allows you to select which input method to use. When 0, it uses the second-input priority without reactivation (**2IP No Reactivation**, called 'Last Input Controlled Priority' in the SOCD article [here](https://www.hitboxarcade.com/blogs/support/what-is-socd#:~:text=What%20is%20an%20SOCD%3F,Right%20at%20the%20same%20time.)), and when 1 uses **Neutral with Reactivation**. I only included the SOCD methods that are desirable to use. 2IP with reactivation is banned under the most recent Smash World Tour Ruleset, and while you could use Neutral without reactivation, it is unintuitive and unnecessarily limits your inputs.
@@ -51,38 +50,36 @@ This was a more experimental method that I added after the fact, since it combin
 Analog press attempts to make it so that a digital button press behaves more like an analog stick. When you press a button, instead of corresponding to a coordinate, it can be thought of as **pushing the analog stick towards a gate.** When I press up, the control stick travels towards the upwards cardinal. If I press up and right, the control stick travels into the North-East gate. This means that the stick will travel across the coordinate space, and can be polled at any coordinate along its path, just like an analog stick.
 
 When you press in a new direction, the cursor will attempt to move in a straight line from your current coordinate towards the target gate. There are 8 targets, accounting for the 8 possible combinations of button inputs: 4 cardinals and 4 diagonal gates. On an analog stick, you would be able to push the stick straight into the rim at any angle. Unfortunately, since digital inputs can only have 4 directional buttons (much more than that would be impractical anyway), we are more limited to specifying 8 target points. Even with this limitation, by changing which direction the stick is moving, you will be able to move your cursor to any possible coordinate value.
-<p align="center">
-  <img src="src/img/span.gif" width="600" height="600">
-  <br />You are able to smoothly move through all coordinates!
-</p>  
-There is one condition where the stick is not moving in a straight line, and that is when it is <b>rolling between gates</b>. If the stick is at the edge of the coordinate circle and you are moving to an adjacent gate, the control stick will move along the edge of the circle, instead of a straight line. This is important for characters whose recovery moves depend on the distance the stick is from the center. A straight path from gate to gate does not achieve the max distance. Also, this rolling motion is more akin to how players move an analog stick between gates, increasing the similarity of these input methods. To more closely match Gamecube controller behaviour, the cursor moves slower when rolling against the edge. Since the stick rubs against the rim during travel, and the thumb has to move in a different motion while against the rim, it makes sense for it to move slower in this state.
 
-<br />This is the general behaviour using the 4 directional buttons. Just like current DTA input schemes, **modifiers** are used to provided additional behaviours to the controller. Note that unlike the current standard, you can hold multiple modifiers at the same time, and their effects will all still apply.
+![Span](src/img/span.gif)
+
+You are able to smoothly move through all coordinates!
+
+There is one condition where the stick is not moving in a straight line, and that is when it is **rolling between gates**. If the stick is at the edge of the coordinate circle and you are moving to an adjacent gate, the control stick will move along the edge of the circle, instead of a straight line. This is important for characters whose recovery moves depend on the distance the stick is from the center. A straight path from gate to gate does not achieve the max distance. Also, this rolling motion is more akin to how players move an analog stick between gates, increasing the similarity of these input methods. To more closely match Gamecube controller behaviour, the cursor moves slower when rolling against the edge. Since the stick rubs against the rim during travel, and the thumb has to move in a different motion while against the rim, it makes sense for it to move slower in this state.
+
+This is the general behaviour using the 4 directional buttons. Just like current DTA input schemes, **modifiers** are used to provided additional behaviours to the controller. Note that unlike the current standard, you can hold multiple modifiers at the same time, and their effects will all still apply.
 
 #### Modifiers - Slow
 When you press a button the stick will move quickly towards its target at a constant velocity. It moves quickly because desirable actions like dash require a fast movement from one coordinate to the next. There are times when a slower input is needed, such as initiating a tilt input, or to precisely adjust an angle. To do this, you press the **Slow** modifier. The stick behaviour is the exact same for both the fast and slow movements, all that changes is how quickly they occur.
-<br />
-<p align="center">
-  <img src="src/img/slow.gif" width="600" height="600">
-  <br />Comparing slow and fast stick movement
-</p> 
+
+![slow](src/img/slow.gif)
+
+Comparing slow and fast stick movement
 
 #### Modifiers - Hold
 The way this system is designed, when pressing a button, the cursor is constantly in motion. If you let go of all the buttons, then the cursor returns to neutral (think of it as letting go of the stick). This presents a challenge. What if I want to hold my stick at a certain position? Say I want to hold a slight DI coordinate, or I think I have reached the angle I want, but need to wait slightly longer to become actionable and use the angle with my next input. To hold the stick at its current position, press the **hold** button, which will freeze the cursor at the current coordinate. It will be frozen for as long as *hold* is pressed, and **at least one direction button is pressed.** If you fully let go of all directions, the stick will return to neutral, and you will not be able to input any other directions until you release *hold*. If you release *hold* at any point, then the cursor will once again move in the direction of your current input.
-<br />
-<p align="center">
-  <img src="src/img/hold.gif" width="600" height="600">
-  <br />Holding in certain coordinates
-</p> 
+
+![hold](src/img/hold.gif)
+Holding at a coordinate
 
 #### Modifiers - Notch
 Most boxes only have 2 dedicated modifier buttons, but I experimentally wanted to add notch funtionality. If your cursor is currently against the rim, and rolling from a diagonal into an adjacent cardinal, and the **notch** button is pressed, the cursor will be stopped at the notch value. This allows for the targetting of desirable coordinates along the edge, much like a modified Gamecube Controller shell. 8 notch values are permitted, allowing Analog Press to target 16 coordinates (4 cardinals, 4 diagonals, 8 notches).
 
-<p align="center">
-  <img src="src/img/notch.gif" width="600" height="600">
-  <br />Rolling the stick into a notch
-</p> 
-By default, the notches are set to the maximum allowable angles under the Smash World Tour ruleset <b>(0.9125,0.3875)</b>, which is <b>23°.</b> Certain characters might want other values. You can adjust the notch coordinates by changing the values in these line of <i>dac.py</i>.  
+![notch](src/img/notch.gif)
+
+Rolling the stick into a notch
+
+By default, the notches are set to the maximum allowable angles under the Smash World Tour ruleset **(0.9125,0.3875)**, which is **23°.** Certain characters might want other values. You can adjust the notch coordinates by changing the values in these line of *dac.py*.  
 
 ```python
 if ((current_region == 2 or current_region == 4) and target_region == 3) or ((current_region == 6 or current_region == 8) and target_region == 7):
@@ -91,7 +88,7 @@ else:
   notch_p = region_coords(current_region,Point(73,31))
 ```
 
-<br />Some people might be opposed to this addition, as notches are already a contentious topic on the Gamecube controller, and make hitting good angles consistent with Analog Press. Luckily, it can easily be removed if it is considered too strong. After some consideration, I believe that it would not be an unfair addition. Controllers have notches as well, and the coordinates that can legally be pinpointed with a DTA controller are intentionally limited. Digital controllers are advantaged because they can pinpoit a singular value, and the input is easier on buttons as opposed to a stick.  However they are weaker in the angles they can reach. So long as you are not allowed to pinpoint precise coordinates that allow for special tech, like Peach parasol dash, I think the tradeoffs are fair. A notch button allows Analog Press to wavedash further than a standard rectangle, but comes at the cost of a slightly trickier input, and inability to hit multiple precise angles.
+Some people might be opposed to this addition, as notches are already a contentious topic on the Gamecube controller, and make hitting good angles consistent with Analog Press. Luckily, it can easily be removed if it is considered too strong. After some consideration, I believe that it would not be an unfair addition. Controllers have notches as well, and the coordinates that can legally be pinpointed with a DTA controller are intentionally limited. Digital controllers are advantaged because they can pinpoit a singular value, and the input is easier on buttons as opposed to a stick.  However they are weaker in the angles they can reach. So long as you are not allowed to pinpoint precise coordinates that allow for special tech, like Peach parasol dash, I think the tradeoffs are fair. A notch button allows Analog Press to wavedash further than a standard rectangle, but comes at the cost of a slightly trickier input, and inability to hit multiple precise angles.
 
 #### Modifier Layout and Design
 One further consideration is the ergonomics of the modifiers. Using a third dedicated modifier would require controllers have an additional button, or replace a button in the current layout. Even if there is no **Notch** modifier, you often want to press **Slow** and **Hold** simultaneously, to avoid overshooting the intended coordinate. Because of this, they cannot take the place of both **Modifier X** and **Modifier Y**, because it would be hard for the thumb to press both at the same time. It is important to ensure the controller remains ergonomic, and it **must** be compatible with the layouts of existing hardware. Perhaps there is a way to further improve the layout and design of the modifiers.
@@ -99,16 +96,16 @@ One further consideration is the ergonomics of the modifiers. Using a third dedi
 #### Other Digital to Analog buttons
 This input scheme is only designed with the Left Stick in mind. I don't think this would work as well on the C Stick, and there is probably a better solution. From what I understand, a digital C Stick can provide an advantage analog C Stick, but I don't know enough about the topic to comment on if, or how it should be balanced. As such, this DTA scheme was never meant to apply to the C Stick, and perhaps there is a better way to handle that input(if it needs it at all). It might be good to use the ideas presented here as a starting point.
 
-<br />The same is true for analog shields. You would still need the current lightshield/mediumshield buttons to get analog values. I think that if you wished to include a notch modifier, it could replace the medium shield button, such that existing controllers do not need to add more buttons. Do people use the medium shield on rectangles?
+The same is true for analog shields. You would still need the current lightshield/mediumshield buttons to get analog values. I think that if you wished to include a notch modifier, it could replace the medium shield button, such that existing controllers do not need to add more buttons. Do people use the medium shield on rectangles?
 
 #### Parity
 The aim of a more 'analog' DTA input is to avoid the balance issues created by more 'digital' input schemes. I think that it accomplishes this, and this can be seen by looking at travel time and consistency. However there are still some disparities that need to be understood and addressed, so balance is acheieved.
 
-<br />The stick moves with a constant velocity. Currenly there are 4 possible velocities. When it undergoes 'fast' movements, 'slow' movements, rolling along the 'rim', and when the stick is returning to neutral. Obviously, a physical stick will move with a large variety of speeds, but it isn't feasible to implement such complexity. The DTA method should be simple, but move in a way you might expect a player to be able to move the stick. The current velocities were chosed semi-aribtrarily to allow for basic techniques like smash inputs, tilt inputs and more advanced ones dashback out of crouch to be performed. To improve this, basing the stick velocities off of measured results would help to maintain parity. This way, the stick would not be able to move faster than a human can move a stick.
+The stick moves with a constant velocity. Currenly there are 4 possible velocities. When it undergoes 'fast' movements, 'slow' movements, rolling along the 'rim', and when the stick is returning to neutral. Obviously, a physical stick will move with a large variety of speeds, but it isn't feasible to implement such complexity. The DTA method should be simple, but move in a way you might expect a player to be able to move the stick. The current velocities were chosed semi-aribtrarily to allow for basic techniques like smash inputs, tilt inputs and more advanced ones dashback out of crouch to be performed. To improve this, basing the stick velocities off of measured results would help to maintain parity. This way, the stick would not be able to move faster than a human can move a stick.
 
-<br />Coordinates are used as targets for stick position, which allows for specific values to be pinpointed. The coordinates are the cardinals and diagonals, which can also be targetted on the Gamecube controller because of the octagonal gates. On the Gamecube controller, due to sensor noise, inability to remain perfectly still and error in the alignment of the stickbox and the shell, it is hard (sometimes impossible) to consistently achieve perfect **cardinals (0.0, 1.0)** or **diagonals (0.7,0.7)**. Even if you can hit these values, the coordinate read by the game will fluctuate when held. While a DTA result will always be more precise, the added precision does not present a significant advantage in this case. A traditional controller can target these values approximately, and because the range of values that generate in-game outputs are large enough at the gates (This had to be fixed in some cases with UCF), having more precision does not create a meaningful advantage. 1.0 cardinal is something to consider, however that is a separate discussion and can be easily implemented. I mentioned notches above, and the need to be careful in allowing players to pinpoint values without restriction.
+Coordinates are used as targets for stick position, which allows for specific values to be pinpointed. The coordinates are the cardinals and diagonals, which can also be targetted on the Gamecube controller because of the octagonal gates. On the Gamecube controller, due to sensor noise, inability to remain perfectly still and error in the alignment of the stickbox and the shell, it is hard (sometimes impossible) to consistently achieve perfect **cardinals (0.0, 1.0)** or **diagonals (0.7,0.7)**. Even if you can hit these values, the coordinate read by the game will fluctuate when held. While a DTA result will always be more precise, the added precision does not present a significant advantage in this case. A traditional controller can target these values approximately, and because the range of values that generate in-game outputs are large enough at the gates (This had to be fixed in some cases with UCF), having more precision does not create a meaningful advantage. 1.0 cardinal is something to consider, however that is a separate discussion and can be easily implemented. I mentioned notches above, and the need to be careful in allowing players to pinpoint values without restriction.
 
-<br /> There are still some disparities, resulting in techniques being much easier to perform than on a Gamecube Controller. For example, pivot tilts are easy; you just need to press the direction you wish to tilt, along with the slow modifier to get your tilt input (timing the pivot is the challenging part of the technique). While not yet implemented, I think balance should be inspired by how the analog stick behaves. Perhaps if the stick is moving quickly, a slow input moves faster than normal for some time, since the difficulty with pivot tilts on an analog stick comes from pinpointing a tilt after the quick pivot input. If the DTA scheme is designed to work like an analog stick, then in theory it should have the same capabilites as an analog stick. The design just needs to provide a close enough analogue. For example, making the stick move slower along the rim made the behaviour more closely match the Gamecube controller. Adding this behaviour was important to make dashback out of crouch, quarter circle SDI and quickly hitting notch angles similar in difficulty to what can be done now. Balance is obviously top of mind, and with more suggestions and changes, I believe it can be reached.
+There are still some disparities, resulting in techniques being much easier to perform than on a Gamecube Controller. For example, pivot tilts are easy; you just need to press the direction you wish to tilt, along with the slow modifier to get your tilt input (timing the pivot is the challenging part of the technique). While not yet implemented, I think balance should be inspired by how the analog stick behaves. Perhaps if the stick is moving quickly, a slow input moves faster than normal for some time, since the difficulty with pivot tilts on an analog stick comes from pinpointing a tilt after the quick pivot input. If the DTA scheme is designed to work like an analog stick, then in theory it should have the same capabilites as an analog stick. The design just needs to provide a close enough analogue. For example, making the stick move slower along the rim made the behaviour more closely match the Gamecube controller. Adding this behaviour was important to make dashback out of crouch, quarter circle SDI and quickly hitting notch angles similar in difficulty to what can be done now. Balance is obviously top of mind, and with more suggestions and changes, I believe it can be reached.
 
 ## Contributing
 I'm sure people have plenty of thoughts on how to improve balance. I welcome it! Because of some of the disparities mentioned above I do think it is **stronger than a controller currently**. I do not have the expertise to fully balance the system by myself, nor do I want to do all the work. Please, experiment with the code to make it fair and intuitive to use. Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
