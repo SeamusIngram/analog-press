@@ -409,17 +409,17 @@ def box_coords(buttons):
 
   if (vertical and horizontal):
     if (buttons.l or buttons.r):
-      if (buttons.slow == buttons.notch):
+      if (buttons.notch == buttons.slow):
           x = 0.7
           y = 0.7 if read_up else 0.6875
-      elif buttons.slow:
+      elif buttons.notch:
           x = 0.6375
           y = 0.375
       else: 
         x = 0.475 if read_up else 0.5
         y = 0.875 if read_up else 0.85
-    elif (buttons.B and (buttons.slow != buttons.notch)):
-      if (buttons.slow):
+    elif (buttons.B and (buttons.notch != buttons.slow)):
+      if (buttons.notch):
         if (buttons.c_down):
             x = 0.9125
             y = 0.45
@@ -452,8 +452,8 @@ def box_coords(buttons):
             x = 0.3875
             y = 0.9125
                   
-    elif (buttons.slow != buttons.notch):
-      if (buttons.slow):
+    elif (buttons.notch != buttons.slow):
+      if (buttons.notch):
         if (buttons.c_down):
           x = 0.7
           y = 0.3625
@@ -490,10 +490,10 @@ def box_coords(buttons):
       y = 0.7
 
   elif (horizontal):
-      if (buttons.slow == buttons.notch):
+      if (buttons.notch == buttons.slow):
          x = 1.0
          y = 0.0
-      elif (buttons.slow): 
+      elif (buttons.notch): 
         x = 0.6625
         y = 0.0
       else: 
@@ -501,10 +501,10 @@ def box_coords(buttons):
         y = 0.0
 
   elif (vertical):
-      if (buttons.slow == buttons.notch): 
+      if (buttons.notch == buttons.slow): 
         x = 0.0
         y = 1.0
-      elif (buttons.slow): 
+      elif (buttons.notch): 
         x = 0.0
         y= 0.5375
       else: 
