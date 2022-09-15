@@ -1,6 +1,8 @@
 # analog-press
 Alternative Digital-to-Analog (DTA) input for box style controllers which aims to more closely follow traditional analog stick behavior. The code in this repository allows you to visualize your inputs for Analog Press, the DTA scheme used in current box-style controllers, and a version of the current scheme with travel time implementation. To see how Analog Press works, head to [DTA Methodology](#dta-methodology). You can also select between 2 [SOCD Resolution Methods](https://www.hitboxarcade.com/blogs/support/what-is-socd#:~:text=What%20is%20an%20SOCD%3F,Right%20at%20the%20same%20time.).
 
+## Try it Yourself!
+As this is experimental, it would be great to know if people enjoy how it plays. The code here is just a visualizer, but I have made 2 options you can use to play Melee. I  an implementation of it using Arte's pico rectangle [here](https://github.com/SeamusIngram/pico-rectangle) (Note that you will need to compile the project yourself). If you don't have a pico controller, you can try a keyboard version [here](https://github.com/SeamusIngram/apress-ahk), that is based on [b0xx-ahk](https://github.com/agirardeau/b0xx-ahk), which you might be familiar with if you've played keyboard melee before. Both should work without needing you to adjust the code.
 ## Dependencies
 Currently, to run the project you will need to install python. In the future, a packaged app may be released, but getting started with python is very straightforward. I recommend getting started with [VS Code](https://code.visualstudio.com/docs/python/python-tutorial) if you're brand new to this sort of thing.
 You will also need to install [pygame](https://www.pygame.org/wiki/GettingStarted) to run the program.
@@ -14,15 +16,15 @@ Default Window Appearance
 ## Keybindings
 The default keybindings are as follows:
 ![default keybinds](/src/img/default-layout.PNG)
-Note that only the buttons necessary to generate or modify coordinate values have been mapped. The keybinds are contained in the *keymap.py* folder. Simply change the variable to the key you wish to use. The names of the pygame constants are available [here](https://www.pygame.org/docs/ref/key.html). 
+This is the default layout I chose for apress-ahk, except that only the buttons necessary to generate or modify coordinate values have been mapped. The keybinds are contained in the *keymap.py* folder. Simply change the variable to the key you wish to use. The names of the pygame constants are available [here](https://www.pygame.org/docs/ref/key.html). 
 
-For example, if I wished to change my B key from I to O,
+For example, if I wished to change my B button from the I to O key,
 ```python
-NOTCH = pygame.K_i
+B = pygame.K_i
 ```
 would become
 ```python
-NOTCH = pygame.K_o
+B = pygame.K_o
 ```
 Note that the **NOTCH**, and **SLOW** buttons correspond to **Modifier X** and **Modifier Y** in the standard box input scheme, respectively. 
 
@@ -37,7 +39,7 @@ Similarly, the value **dac_type** in **update_pos** allows you to select which i
 The DTA input coordinates are taken straight from Arte's pico rectangle firmware [here](https://github.com/JulienBernard3383279/pico-rectangle/blob/master/src/dac_algorithms/melee_F1.cpp). This is based on the current Frame1 DAC, which means there are some nerfs found on the b0xx that are not implemented. If you wish to understand why certain coordinates values were chosen, and the combinations of buttons that yield certain coordinates, you can read the **b0xx SSBM [instruction manual](https://drive.google.com/file/d/1InBmEJkWi3E5ReAUIGM9loHygaoNODcf/view).**
 
 ### Motivation for Alternative DTA methods
-The current DTA scheme in box controllers maps a combination of buttons to a specific coordinate, allowing for fast consistent inputs. These inputs are generated in a fundamentally different way that how an analog stick creates inputs. This can lead to balance issues, as risks associated with certain stick inputs will never occur on a box. It is possible that relative parity between the current digital and analog controllers can be reached through smart changes and regulations, but it can be difficult to determine the best way to achieve balance. Do you implement travel time nerfs? Add randomness to boxes? Do gamecube controllers need a buff? There are lots of possible solutions, but it can be hard to find an answer that delivers parity between control schemes, while not changing the balance of the game or upsetting large amounts of the playerbase. By making digital controllers more 'analog', it more closely connects the different styles of controllers, so they are subject to the same risks during gameplay, and makes them more intuitive to balance.
+The current DTA scheme in box controllers maps a combination of buttons to a specific coordinate, allowing for fast consistent inputs. These inputs are generated in a fundamentally different way that how an analog stick creates inputs. This can lead to balance issues, as risks associated with certain stick inputs will never occur on a box. It is possible that relative parity between the current digital and analog controllers can be reached through smart changes and regulations, but it can be difficult to determine the best way to achieve balance. Do you implement travel time nerfs? Add randomness to boxes? Do gamecube controllers need a buff? Should it be in game like UCF, or enforced by the controller? There are lots of possible solutions, but it can be hard to find an answer that delivers parity between control schemes, while not changing the balance of the game or upsetting large amounts of the playerbase. By making digital controllers more 'analog', it more closely connects the different styles of controllers, so they are subject to the same risks during gameplay, and makes them more intuitive to balance.
 
 ### Frame1 with Travel Time
 A potential solution to travel time concerns on digital controllers. It does not eliminate all disparity between analog and digital inputs, but it has been suggested as a way of balancing them. The typically suggested implementation is for the controller to output an intermediate value between the original and final destination when moving to a new coordinate. 
